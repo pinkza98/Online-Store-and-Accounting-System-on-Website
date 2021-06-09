@@ -1,0 +1,360 @@
+<?php include 'config_db.php'; ?>
+<!DOCTYPE>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="google-signin-scope" content="profile email">
+<!--    กำหนด client ID ที่เราได้สร้างไว้-->
+    <meta name="google-signin-client_id" content="359810758501-72l25omseo04qvpanpa4idfghn98kjb3.apps.googleusercontent.com">
+        
+        <title>AC ECOM</title>
+
+        <!-- ================= Favicon ================== -->
+        <!-- Standard -->
+        <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+        <!-- Retina iPad Touch Icon-->
+        <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+        <!-- Retina iPhone Touch Icon-->
+        <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+        <!-- Standard iPad Touch Icon-->
+        <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+        <!-- Standard iPhone Touch Icon-->
+        <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+        <!-- Styles -->
+        <link href="assets/css/lib/weather-icons.css" rel="stylesheet" />
+        <link href="assets/css/lib/owl.carousel.min.css" rel="stylesheet" />
+        <link href="assets/css/lib/owl.theme.default.min.css" rel="stylesheet" />
+        <link href="assets/css/lib/font-awesome.min.css" rel="stylesheet">
+        <link href="assets/css/lib/themify-icons.css" rel="stylesheet">
+        <link href="assets/css/lib/menubar/sidebar.css" rel="stylesheet">
+        <link href="assets/css/lib/bootstrap.min.css" rel="stylesheet">
+
+        <link href="assets/css/lib/helper.css" rel="stylesheet">
+        <link href="assets/css/style.css" rel="stylesheet">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
+<!--    ต้องมีการเรียกใช้งาน Google Platform Library ในหน้าที่มีการใช้งาน Google Sign In-->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    </head>
+
+    <body>
+        
+        <?php include 'view/sidebar.php'; ?>
+
+
+        <?php include 'view/header.php'; ?>
+
+        <?php
+        function monthThai($int){
+        $num = intval($int);
+        $arr = [" ","มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฏาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+        return $arr[$num];
+          }
+        ?>
+
+
+        <div class="content-wrap">
+            <div class="main" >
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12 ">
+                            <div class="page-header">
+                                <div class="page-title">
+                                    <h1>หน้า, <span>รายการสมุดบัญชีรายวัน</span></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# row -->
+                    <section id="main-content" >
+                        <div class="col-lg-12 " >
+                            <div class="col-md-12" >
+        
+                             
+               <div class="center">
+<div class="center" >
+    <div class="col-lg-12" align="center">
+        <h2><u>บัญชีรายวัน</u></h2>
+    </div>
+
+<table class="table table-bordered table-hover" width="1000" border="1" align="center">
+      <thead class='table-Secondary'>
+        <div class="col-lg-12">
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+
+        <tr>
+          <th width="20%" colspan="2" align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;วันเดือนปี</th>
+          <th width="30%" rowspan="2" class="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;รายการ</th>
+          <th width="10%" rowspan="2" align="center">&nbsp;&nbsp;เลขบัญชี</th>
+          <th colspan="2" width="15%" rowspan="2" align="center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เดบิต</th>
+          <th colspan="2" width="15%" rowspan="2" class="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เครดิต</th>
+          <th colspan="2" width="15%" rowspan="2" class="left">ลบ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+        <tr>
+          <th width="50" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เดือน</th>
+          <th width="50" align="left">วันที่&nbsp;&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+      <div class="col-md-12">
+
+
+    <?php
+     @$AC_ID = $rows["AC_ID"];
+        $string_select="SELECT AC_Date,acc_name,AC_Number,AC_debit,AC_credit,AC_Deteil FROM tb_journal INNER JOIN tb_acc WHERE tb_journal.AC_Number=tb_acc.acc_id";
+        $quer=mysqli_query($mysqli,$string_select);
+        $rows=mysqli_num_rows($quer);
+    $mo = "";
+    $da = "";
+    $date_sum_dr = 0;
+    $date_sum_cr = 0;
+    for($i=1;$i<=$rows;$i++){
+        $data=mysqli_fetch_array($quer);
+
+        $date = date_create($data["AC_Date"]);
+        $month = date_format($date,"m");
+        $months = monthThai($month);
+        $day = date_format($date,"d");
+
+        $n = $data['AC_debit'];
+        $whole = floor($n);
+        $fraction = $n - $whole;
+
+        $n1 = $data['AC_credit'];
+        $whole1 = floor($n1);
+        $fraction1 = $n1 - $whole1;
+?>
+        <tr>
+          <td align="center">
+          <?php
+          if($mo != $month){
+            echo $months;
+          }
+          $mo = $month;
+
+          ?></td>
+          <td align="center"><?php
+          if($da != $day){
+            echo $day;
+          }
+          $da = $day;
+          ?>
+        <!-- /# แสดงชื่อรายการ -->
+          </td>
+          <td><?php if($data["AC_credit"]){?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php } echo $data["acc_name"];?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <?php
+            if($data["AC_debit"]!=""){?>
+                        <td align="center"><?php echo $data["AC_Number"];?></td>
+            <?php
+                      if($data["AC_debit"]){
+            ?>
+                        <td align="center"><?php echo number_format($whole);?></td>
+                        <td align="center"><?php if($fraction!=0 ){echo $fraction;} else{echo "-";}?></td>
+                        <td align="center"></td>
+                        <td></td>
+            <?php
+                      }
+                      else if($data["AC_credit"]){
+            ?>
+                        <td align="center"></td>
+                        <td></td>
+
+                        <td align="center"><?php echo number_format($whole1);?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td align="center"><?php if($fraction1!=0){echo $fraction1;} else{echo "-";}?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        
+            <?php
+                      }
+                      
+            ?>
+                <td>
+                    <a class="badge badge-danger"  href="account_del_db.php?ID=<?=$rows['AC_ID'];?>" onclick="return confirm('ยืนยันลบข้อมูล');">ลบ</a>
+                </td>
+            <?php
+
+            $date_sum_dr = $date_sum_dr+$data['AC_debit'];
+            $date_sum_cr = $date_sum_cr+$data['AC_credit'];
+          if ($date_sum_cr-$date_sum_dr==0) {
+              ?>
+                <tr bgcolor="#d4f4ca">
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <?php echo $data["AC_Deteil"]; ?>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                            
+                                  
+            </tr>
+
+          <?php
+          
+          }
+            /*แสดงรายการเครดิต*/
+           
+        
+      if ($date_sum_cr-$date_sum_dr==0){?>
+      
+            <?php
+                    $date_sum_dr=0;
+                    $date_sum_cr=0;
+                    }    
+                      }?>           
+        </tr>
+    <?php
+    }
+    ?>
+  </tbody>
+
+</table>
+</div>
+</div>
+                        
+                        <?php include 'view/footer.php'; ?>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div id="search">
+            <button type="button" class="close">×</button>
+            
+        </div>
+        <!-- jquery vendor -->
+        <script src="assets/js/lib/jquery.min.js"></script>
+        <script src="assets/js/lib/jquery.nanoscroller.min.js"></script>
+        <!-- nano scroller -->
+        <script src="assets/js/lib/menubar/sidebar.js"></script>
+        <script src="assets/js/lib/preloader/pace.min.js"></script>
+        <!-- sidebar -->
+        <script src="assets/js/lib/bootstrap.min.js"></script>
+
+        <!-- bootstrap -->
+
+        <script src="assets/js/lib/circle-progress/circle-progress.min.js"></script>
+        <script src="assets/js/lib/circle-progress/circle-progress-init.js"></script>
+
+        <script src="assets/js/lib/morris-chart/raphael-min.js"></script>
+        <script src="assets/js/lib/morris-chart/morris.js"></script>
+        <script src="assets/js/lib/morris-chart/morris-init.js"></script>
+
+        <!--  flot-chart js -->
+        <script src="assets/js/lib/flot-chart/jquery.flot.js"></script>
+        <script src="assets/js/lib/flot-chart/jquery.flot.resize.js"></script>
+        <script src="assets/js/lib/flot-chart/flot-chart-init.js"></script>
+        <!-- // flot-chart js -->
+
+
+        <script src="assets/js/lib/vector-map/jquery.vmap.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/jquery.vmap.min.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/jquery.vmap.sampledata.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.world.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.algeria.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.argentina.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.brazil.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.france.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.germany.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.greece.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.iran.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.iraq.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.russia.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.tunisia.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.europe.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/country/jquery.vmap.usa.js"></script>
+        <!-- scripit init-->
+        <script src="assets/js/lib/vector-map/vector.init.js"></script>
+
+        <script src="assets/js/lib/weather/jquery.simpleWeather.min.js"></script>
+        <script src="assets/js/lib/weather/weather-init.js"></script>
+        <script src="assets/js/lib/owl-carousel/owl.carousel.min.js"></script>
+        <script src="assets/js/lib/owl-carousel/owl.carousel-init.js"></script>
+        <script src="assets/js/scripts.js"></script>
+        <!-- scripit init-->
+
+        <script>
+        var urlDirect="http://localhost/AC_ECOM/admin/auth/login.php";  // หนัาที่ต้องการให้แสดงหลังล็อกอิน
+     
+/*      สังเกตจากปุ่มล็อกอินด้านบน จะเห็นว่ามีการกำหนด data-onsuccess="onSignIn"
+        ซึ่งก็คือเมื่อมีการล็อกอินผ่าน Google แล้วให้เรียกใช้งานฟังก์ชั่น ที่ชื่อ onSignIn*/
+      function onSignIn(googleUser) {
+           
+        // ขอมูลของผู้ใช้งานที่ล็อกอิน ที่เราสามารถนำไปใช้งานได้ 
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // google แนะนำว่าไม่ควรส่งคานี้ไปเก็บไว้บน server 
+        // ค่า ID นี้เราสามรรถประยุกต์เพิ่มเติมตามต้องการ เช่นอาจจะเข้ารหัสก่อนบันทึกหรืออะไรก็ได้
+        // แต่ในที่นี้จะใช้วิธีอยางง่่ายเพื่อเป็นแนวทาง
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+ 
+        // google แนะนำให้ใช้ ID token สำหรับใช้ในการตรวจสอบการล็อกอิน
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+         
+        if(profile.getId()!=null && profile.getName()!=null){
+            // ส่งข้อมูลไปใช้งาน เช่นตรวจสอบการล็อกอิน หรือสร้างข้อมูลสมาชิกใหม่  
+            $.post("checkuser.php",{  
+                ggname:profile.getName(),
+                gggivenname:profile.getGivenName(),
+                ggfamilyname:profile.getFamilyName(),  
+                ggemail:profile.getEmail(),  
+                ggid:profile.getId(),  
+                idTK:id_token  
+            },function(data){  
+                console.log(data);  
+                window.location=urlDirect;  
+            });     
+        }else{
+            alert("เกิดข้อผิดพลาด กรุณาลอกใหม่!");  
+        }
+         
+      };
+    </script>
+        <script>
+/*      ฟังก์ชั่นล็อกเอาท์*/
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            // เรียกไฟล์ล็อกเอาท์ เพื่อล้างค่าตัวแปร session  
+            $.post("logout.php",function(){  
+                  console.log('User signed out.');
+                  window.location=urlDirect; // รีโหลดหน้านี้ใหม่
+            });             
+        });
+      }
+    </script>
+    </body>
+</html>

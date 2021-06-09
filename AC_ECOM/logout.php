@@ -1,0 +1,11 @@
+<?php  
+session_start();  
+require_once("config_db.php");  
+unset(  
+    $_SESSION['ses_user_id'],
+    $_SESSION['ses_user_email'],
+    $_SESSION['ses_user_fullname'],
+    $_SESSION['ses_user_name'],
+    $_SESSION['ses_user_last_login']
+);  
+exit;
